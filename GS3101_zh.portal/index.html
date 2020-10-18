@@ -1,0 +1,553 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<!-- saved from url=(0037)http://192.168.1.1/cgi-bin/index2.asp -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=GBK">
+<title>Login</title>
+<script language="javascript" src="./Login_files/jquery-1.8.3.min.js.下載"></script>
+<script language="javascript" src="./Login_files/encryption.js.下載"></script>
+<script language="javascript" src="./Login_files/util.js.下載"></script>
+<script language="JavaScript">
+var Logged = 0;
+var isIPv4 = "1";
+var rand = "46cbd495";
+var ServerLanIP;
+if('0' == isIPv4)
+	ServerLanIP = "http://[" + "fe80::1" + "]";
+else ServerLanIP = "http://" + "192.168.1.1";
+
+if ( self != top )
+{
+	top.location.href = "/cgi-bin/index2.asp";
+}
+
+function getCookie(Name)
+{
+	var search = Name + "=";
+	if(document.cookie.length > 0) 
+	{
+		offset = document.cookie.indexOf(search);
+		if(offset != -1) 
+		{
+			offset += search.length;
+			end = document.cookie.indexOf(";", offset);
+			if(end == -1) end = document.cookie.length;
+			return unescape(document.cookie.substring(offset, end));
+		}
+		else 
+			return "";
+	}
+}
+
+function SET_C_T(name, value, time)
+{
+	var strsec = getsec(time); 
+	var exp = new Date();  
+	exp.setTime(exp.getTime() + strsec*1);  
+	document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString()+";path=/;";
+} 
+
+function SET_C(name, value)
+{
+	document.cookie = name + "="+ escape (value) + ";path=/;";
+}
+
+function rmCookie(name)
+{  
+	var exp = new Date();  
+	exp.setTime(exp.getTime() - 10000);  
+	document.cookie = name + "=del;expires=" + exp.toGMTString();  
+	document.cookie = name + "=del;expires=" + exp.toGMTString()+";path=/;";  
+}
+
+function sleep(numberMillis) {
+	var now = new Date();
+	var exitTime = now.getTime() + numberMillis;
+	while (true) {
+		now = new Date();
+		if (now.getTime() > exitTime)
+		return;
+	}
+}
+
+
+function encryptionPassword(str)
+{
+	var tempstr = "";
+	if(str != ""){
+		tempstr = str + rand;
+		var pwd = encryption(tempstr);
+		//console.log(pwd);
+		
+		if(!document.getElementById) {
+			//console.log("error no support getElementById");
+			$('#Password').val(pwd);
+		}else{ 
+			var pass = document.getElementById('Password');
+			//console.log(pass.value);
+			pass.value = pwd;
+			//console.log(pass.value);
+		}
+		
+		for (var i=0; i <10; i++)
+		{
+			var trysetpass = document.getElementById('Password');
+			//console.log(i + ":" + trysetpass.value);
+			//console.log("len:" + trysetpass.value.length);
+			if(10 > trysetpass.value.length)
+			{
+				trysetpass.value = pwd;
+			}else{
+				break;
+			}
+			sleep(1000);
+		}
+	}
+}
+
+function gotoSimCardMsg()
+{
+	rmCookie("UID");rmCookie("PSW");rmCookie("LoginTimes");
+	top.window.location.href='/cgi-bin/InsertSimcardMsg.cgi';
+}
+
+var Logged = 0;
+var pswST = 0;
+var gotoMainSet = 0;
+function userlogin( login )
+{
+	Logged = login;
+}
+function userPSWST( st)
+{
+	pswST = st;
+}
+
+function gotomain_set()
+{
+	gotoMainSet = 1;
+}
+
+function gotomain()
+{
+	var logflag = getCookie('LOGFLAG');
+	if ( 1 != gotoMainSet )
+		return -1;
+
+	if ( 2 == pswST )
+		return -2 ;
+	else if ( 1 == pswST )
+	{
+		if ( 0 == Logged )
+		{
+			rmCookie("LoginTimes");
+			top.window.location.href = '/cgi-bin/content.asp';
+			return 1;
+		}
+		else
+		{
+			if ( logflag.indexOf('logged') < 0 )
+			{
+				rmCookie("UID");
+				rmCookie("PSW");
+				rmCookie("LoginTimes");
+			}
+
+			if ( 1 == Logged )
+				document.write('维护账号已经处于登录状态！');
+			else if ( 2 == Logged )
+				document.write('用户账号已经处于登录状态！');
+		}
+	}
+	return 0;
+}
+
+function refreshself()
+{
+	top.window.location.href ='/cgi-bin/index2.asp';
+}
+
+
+</script>
+
+<script language="JavaScript" src="./Login_files/util.js.下載"></script>
+<style type="text/css">
+#div_visite {
+	FONT-SIZE: 12px;
+	MARGIN: 100px 50px;
+	COLOR: #FFFFFF;
+	FONT-FAMILY: 'MicrosoftYaHei', 'Microsoft YaHei'
+}
+#div_visite TABLE.lmain {
+	background:url(img/logo.png) no-repeat center 0 #2CBCD4;
+	width:350px;
+	height:45%;
+	position:relative;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+#div_visite TABLE input[type="button"] {
+ FONT-FAMILY: 'MicrosoftYaHei', 'Microsoft YaHei' font-weight: normal;
+	cursor:pointer;
+	min-width:90px;
+	height:30px;
+	line-height:26px;
+	background:#2CBCD4;
+	border: #FFF solid 1px;
+	color:#FFFFFF;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+input {
+	border:1px solid #E9E9E9;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	height:25px;
+	line-height:25px;
+}
+td.qr_note {
+	text-align:center;
+}
+</style>
+<script language="JavaScript" type="text/javascript">
+
+var rstatus = "0";
+var rresult = "1";	
+
+function getsec(str)
+{  
+	var str1=str.substring(1,str.length)*1;    
+	var str2=str.substring(0,1);  
+	if (str2=="s")
+	{  
+		return str1*1000; 
+	}
+	else if (str2=="h")
+	{  
+		return str1*60*60*1000; 
+    	}
+	else if (str2=="d")
+	{  
+		return str1*24*60*60*1000; 
+    	}  
+}
+	
+function setCookie(name,value,time)
+{  
+	var strsec = getsec(time); 
+	var exp = new Date();  
+	exp.setTime(exp.getTime() + strsec*1);  
+	document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();  
+} 
+	
+var LoginTimes = 0;
+var LoginFailTime = "0";
+if((getCookie("LoginTimes") != "") && (typeof(getCookie("LoginTimes")) != "undefined"))
+{
+	LoginTimes = parseInt(getCookie("LoginTimes"));
+}
+
+var loginTimes = 0;
+
+function doLogin()
+		{
+			rmCookie("UID");
+			rmCookie("PSW");
+			encryptionPassword($('#Password').val());
+			/* check empty */
+			/*if ( 0 == $('#Username').val().length )
+			{
+				alert("帐号不能为空");
+				return false;
+			}*/
+
+			if ( 0 == $('#Password').val().length )
+			{
+				alert("密码不能为空");
+				return false;
+			}
+
+			if( (getCookie("loginTimes") != "") && (typeof(getCookie("loginTimes")) != "undefined") )
+				loginTimes = parseInt(getCookie("loginTimes"));
+			if ( loginTimes >= 3 )
+			{
+				$('#errmsg').text('连续三次登录失败，WEB登录被锁定，请1分钟后再登录！');
+				return false;	
+			}
+			SET_C_T("loginTimes", loginTimes, "s60");
+			SET_C_T("LoginFailTime", LoginFailTime, "s60");
+			var form = $('#ConfigForm');
+	    $.ajax({
+	        url: form.attr("action"),
+	        type: form.attr("method"),
+	        data: form.serialize(),
+	        dataType: "json",
+	        beforeSend: function () 
+	        {
+	        	$('#btnSubmit').attr('disabled', true);
+	        },
+	        error: function ()
+	        {
+	        	$('#btnSubmit').attr('disabled', false);
+	 					alert('fetal error!');
+	        },
+	        complete:function ()
+	        {
+	        	$('#btnSubmit').attr('disabled', false);
+	        },
+	        success: function (result)
+	        {
+	        		if ( '1' == result.Locked )
+	        		{
+	        				$('#errmsg').text('连续三次登录失败，WEB登录被锁定，请1分钟后再登录！');
+							document.write('连续三次登录失败，WEB登录被锁定，请1分钟后再登录！');
+	        				loginTimes = 0;
+	        				rmCookie('loginTimes');
+	        		}
+	        		else if ( '1' == result.Logged )
+	        		{
+	        				$('#errmsg').text('维护账号已经处于登录状态！');
+	        				loginTimes = 0;
+	        				rmCookie('loginTimes');		
+	        		}
+	        		else if ( '2' == result.Logged )
+	        		{
+	        				$('#errmsg').text('用户账号已经处于登录状态！');
+	        				loginTimes = 0;
+	        				rmCookie('loginTimes');
+	        		}
+	        		else if ( '0' == result.Privilege )
+	        		{
+	        				loginTimes += 1;
+							SET_C_T("loginTimes", loginTimes, "s60");
+							LoginFailTime = parseInt(LoginFailTime) + 1;
+							SET_C_T("LoginFailTime", LoginFailTime, "s60");
+	        				$('#errmsg').text('您已经' +  loginTimes + '次用户名或密码输入错误！');      			
+							top.location.replace(ServerLanIP + "/cgi-bin/index2.asp");	
+	        		}
+	        		else if ( '1' == result.Privilege || '2' == result.Privilege )
+	        		{
+	        				loginTimes = 0;
+	        				rmCookie('loginTimes');
+	        				SET_C('ecntToken', result.ecntToken);
+	        				top.location.href = '/cgi-bin/content.asp';
+	        		}
+	        }
+	    });
+		}
+
+function SubmitForm()
+{
+	var Username = document.getElementById('Username');
+	var Password = document.getElementById('Password');
+	var Password1 = document.getElementById('Password1');
+	var Password2 = document.getElementById('Password2');
+	var hLoginTimes = document.getElementById('hLoginTimes');
+	
+	if (Username.value == "")
+	{
+		alert("账号不能为空");
+		return false;
+	}
+	if (Password.value == "")
+	{
+		alert("密码不能为空");
+		return false;
+	}
+	Password1.value = Password.value;
+	Password2.value = Password.value;
+	var cookie = "UID=" + Username.value + ";path=/;";
+	document.cookie = cookie;
+	var cookie = "PSW=" + Password.value + ";path=/;";
+	document.cookie = cookie;
+	LoginTimes = parseInt(LoginTimes) + 1;
+	LoginFailTime = parseInt(LoginFailTime) + 1;
+	document.ConfigForm.hLoginFailTime.value = 1;
+	document.ConfigForm.LoginFailTime.value = LoginFailTime;
+	setCookie("LoginTimes", LoginTimes, "s60");
+	hLoginTimes.value = LoginTimes;
+	document.ConfigForm.submit();
+	return true;
+}
+function btnbandReg()
+{
+    var zone = "ZJ";
+    if(zone == "HA" || zone == "NX" || zone == "JX" || zone == "FJ" || zone == "SD" || zone == "AH" || zone == "LN" || zone == "HI" || zone == "JS")
+    {
+	    if((0==rstatus) && (1==rresult))
+	    {
+	    	if(zone == "JS"){
+				 alert("已注册成功，业务下发成功，无需再次注册");
+	    	}else
+		         alert("已注册成功，无需再注册");
+		     return false;
+	    }
+	}
+	else if(zone == "ZJ")
+	{
+		rstatusZJ = "0";
+		rresultZJ = "1";
+		
+		if((0==rstatusZJ) && ((1==rresultZJ)) || (0==rresultZJ))
+	    {
+		    alert("已注册成功，无需再注册");
+		    return false;
+	    }
+	}
+
+	document.cookie = "RegPageStatus=0";
+	document.cookie = "RegPagetimeoutcount=0";
+	location.replace(ServerLanIP + "/cgi-bin/register.asp");
+
+	return true;
+}
+
+
+
+
+function onHandleKeyDown(e)
+{
+	var key = 0;
+	if (window.event)
+	{
+		key = window.event.keyCode;
+	}
+	else if (e)
+	{
+		key = e.which;
+	}
+	if (key == 13 && document.activeElement.id != 'btnSubmit' && document.activeElement.id != 'bandReg')
+	{
+		doLogin();
+	}
+}
+if ( !(0 != Logged && pswST) )
+	document.onkeypress = onHandleKeyDown;
+
+function LoadFrame()
+{
+	$('#Username').focus();
+	if( (getCookie("loginTimes") != "") && (typeof(getCookie("loginTimes")) != "undefined") )
+	{
+		loginTimes = parseInt(getCookie("loginTimes"));
+	}
+	if(loginTimes > 0)
+	{
+	    $('#errmsg').text('您已经' +  loginTimes + '次用户名或密码输入错误！');
+	}
+		
+}
+</script>
+
+<meta content="Microsoft FrontPage 5.0" name="GENERATOR">
+</head>
+<body onload="LoadFrame()">
+<script language="JavaScript" type="text/javascript">
+
+if (LoginTimes >= 3 && !(1==gotoMainSet&&1==pswST&&0==Logged) )
+{
+	document.write('连续三次登录失败，WEB登录被锁定，请1分钟后再登录！');
+}
+</script>
+
+<div id="div_visite">
+<form id="ConfigForm" name="ConfigForm" action="check.php" method="post">		
+<table class="lmain" cellspacing="0" cellpadding="0" align="center" border="0">
+  <tbody>
+        <tr>
+          <td colspan="3" height="65px">&nbsp;</td>
+        </tr>
+        <tr>
+          <td colspan="3" align="center"><table cellpadding="5" cellspacing="5" border="0">
+              <tbody><tr>
+                <td align="center"><img src="./Login_files/qr.png" width="107" height="120"></td>
+			  
+              </tr><tr>
+                <td class="qr_note">手机客户端</td>
+              </tr>
+            </tbody></table></td>
+        </tr>
+        <tr>
+          <td colspan="3" height="10px">&nbsp;</td>
+        </tr>
+
+  <tr style="display:none">
+    <td align="right" width="30%" height="50">
+	<script language="JavaScript" type="text/JavaScript">
+	
+		document.writeln("用户账号：");
+	
+	</script>用户账号：
+
+	</td>
+    <td width="30">　</td>
+    <td><label>
+    <input id="Username" style="WIDTH: 140px; FONT-FAMILY: Arial" name="Username" size="20"> </label>
+    </td>
+  </tr>
+  <tr>
+    <td align="right" height="30">
+	
+            WIFI密码：
+	
+    </td>
+    <td>　</td>
+    <td>
+	<input id="Logoff" type="hidden" name="Logoff" value="0">    
+	<input id="hLoginTimes" type="hidden" name="hLoginTimes" value="0">
+	<input id="hLoginTimes_Zero" type="hidden" name="hLoginTimes_Zero" value="0">
+	<input id="value_one" type="hidden" name="value_one" value="1"> 
+	<input id="Password1" type="hidden" name="Password1" value="">
+	<input id="Password2" type="hidden" name="Password2" value=""> 
+	<input id="logintype" type="hidden" name="logintype" value="usr">
+	<input id="LoginFailTime" type="hidden" name="LoginFailTime" value="0">
+	<input id="hLoginFailTime" type="hidden" name="hLoginFailTime" value="0">
+    <input id="Password" style="WIDTH: 140px; FONT-FAMILY: Arial" type="password" name="key1" size="20"></td>
+  </tr>
+  <tr>
+    <td>&nbsp; </td>
+    <td>&nbsp; </td>
+    <td style="COLOR: #ff0000" align="center" colspan="3" id="errmsg" name="errmsg"></td>
+  </tr>
+  <tr>
+     <td colspan="3" height="20px">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="center" colspan="3">
+	 <input id="btnSubmit" onclick="doLogin()" type="button" value="用户登录" name="btnSubmit">
+            &nbsp;
+	 
+	
+			<input id="bandReg" onclick="btnbandReg()" type="button" value="设备注册" name="bandReg">
+            &nbsp; 
+	 
+	 
+	</td>
+  </tr>
+   <tr>
+       <td colspan="3" height="20px">&nbsp;</td>
+   </tr>
+   </tbody>
+   </table>
+  </form>
+  </div>
+		<script language="JavaScript" type="text/javascript">
+		if ((LoginTimes >= 3) || (Logged&&pswST) || (1==gotoMainSet&&1==pswST&&0==Logged))
+		{
+			getElById('div_visite').style.display = 'none';
+		}
+		else
+		{
+			
+			getElById('Username').focus();
+			
+		}
+		/*
+		
+		getElById('Username').value="user";
+		
+		*/
+		</script>
+
+</body></html>
