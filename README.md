@@ -1,2 +1,2 @@
-# GS3101
-China Mobile light cat GS3202 phishing website for fluxion
+# China Mobile light cat Gibit GS3101 phishing webpage for fluxion.
+Put it into fluxion/attacks/Captive Portal/sites/
